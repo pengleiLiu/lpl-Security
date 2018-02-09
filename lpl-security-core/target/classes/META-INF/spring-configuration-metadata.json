@@ -1,0 +1,22 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.lpl.security.core.properties.SecurityProperties",
+      "name": "lpl.security",
+      "type": "com.lpl.security.core.properties.SecurityProperties"
+    }
+  ],
+  "properties": [
+    {
+      "sourceType": "com.lpl.security.core.properties.SecurityProperties",
+      "name": "lpl.security.browser",
+      "type": "com.lpl.security.core.properties.BrowserProperties"
+    },
+    {
+      "sourceType": "com.lpl.security.core.properties.SecurityProperties",
+      "name": "lpl.security.code",
+      "type": "com.lpl.security.core.properties.ValidateCodeProperties"
+    }
+  ]
+}
