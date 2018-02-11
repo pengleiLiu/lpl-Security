@@ -11,7 +11,7 @@ import org.springframework.security.core.SpringSecurityCoreVersion;
  * @author lpl
  *
  */
-public class SmsCodeAuthentication  extends AbstractAuthenticationToken {
+public class SmsCodeAuthenticationToken  extends AbstractAuthenticationToken {
 
 	private static final long serialVersionUID = SpringSecurityCoreVersion.SERIAL_VERSION_UID;
 
@@ -29,12 +29,17 @@ public class SmsCodeAuthentication  extends AbstractAuthenticationToken {
 	 * will return <code>false</code>.
 	 *
 	 */
-	public SmsCodeAuthentication(Object principal) {
+	public SmsCodeAuthenticationToken(String mobile) {
 		super(null);
-		this.principal = principal;
+		this.principal = mobile;
 		setAuthenticated(false);
 	}
 
+	@Override
+	public Object getCredentials() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	/**
 	 * This constructor should only be used by <code>AuthenticationManager</code> or
 	 * <code>AuthenticationProvider</code> implementations that are satisfied with
@@ -45,7 +50,7 @@ public class SmsCodeAuthentication  extends AbstractAuthenticationToken {
 	 * @param credentials
 	 * @param authorities
 	 */
-	public SmsCodeAuthentication(Object principal, 
+	public SmsCodeAuthenticationToken(Object principal, 
 			Collection<? extends GrantedAuthority> authorities) {
 		super(authorities);
 		this.principal = principal;
@@ -73,9 +78,4 @@ public class SmsCodeAuthentication  extends AbstractAuthenticationToken {
 		super.eraseCredentials();
 	}
 
-	@Override
-	public Object getCredentials() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

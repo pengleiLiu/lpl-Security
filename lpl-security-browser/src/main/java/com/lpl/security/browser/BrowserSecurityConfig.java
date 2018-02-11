@@ -18,6 +18,9 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 
 import com.lpl.security.core.properties.SecurityProperties;
 import com.lpl.security.core.validate.code.ValidateCodeFilter;
+import com.lpl.security.core.validate.code.image.ImageCodeFilter;
+import com.lpl.security.core.validate.code.sms.SmsCodeAuthenticationSecurityConfig;
+import com.lpl.security.core.validate.code.sms.SmsCodeFilter;
 
 @Configuration
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -36,6 +39,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private UserDetailsService userDetailsService;
+	
+	@Autowired
+	private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -58,14 +64,19 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		
-		//验证码过滤
-//		ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
-//		validateCodeFilter.setAuthenticationFailureHandler(lplAuthenticationFailureHandler);
-//		validateCodeFilter.setSecurityProperties(securityProperties);
-//		validateCodeFilter.afterPropertiesSet();
+		//图片验证码过滤验证码过滤
+		ImageCodeFilter imageCodeFilter = new ImageCodeFilter();
+		imageCodeFilter.setAuthenticationFailureHandler(lplAuthenticationFailureHandler);
+		imageCodeFilter.setSecurityProperties(securityProperties);
+		imageCodeFilter.afterPropertiesSet();
+		//短信验证码过滤
+		SmsCodeFilter smsCodeFilter = new SmsCodeFilter();
+		smsCodeFilter.setAuthenticationFailureHandler(lplAuthenticationFailureHandler);
+		smsCodeFilter.setSecurityProperties(securityProperties);
+		smsCodeFilter.afterPropertiesSet();
 		
-		http
-		//.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)	//自定义的一个过滤器
+		http.addFilterBefore(smsCodeFilter, UsernamePasswordAuthenticationFilter.class)	//自定义的一个图片过滤器
+			.addFilterBefore(imageCodeFilter, UsernamePasswordAuthenticationFilter.class)	//自定义的一个短信验证码过滤器
 			.formLogin()	//表单登陆
 				.loginPage("/authentication/require")	//指定登陆页面所在的位置，调到自定义的controller上
 				.loginProcessingUrl("/authentication/form")
@@ -87,7 +98,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 			.anyRequest()	//任何请求
 			.authenticated() //都需要身份认证
 			.and()
-			.csrf().disable();
+			.csrf().disable()
+			.apply(smsCodeAuthenticationSecurityConfig);
 	}
 	
 }
